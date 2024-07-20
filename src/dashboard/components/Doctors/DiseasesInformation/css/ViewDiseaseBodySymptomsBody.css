@@ -1,0 +1,45 @@
+/* ViewDiseaseBodySymptomsBody.css */
+
+.page-wrapper {
+    margin-left: -6px;
+    padding: 20px;
+    background-color: #f4f4f9;
+  }
+  
+  .loading-wrapper {
+    margin-left: -6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  #page-inner {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .symptom-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .symptom-item {
+    background-color: #e9f7fa;
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 5px;
+    color: #333;
+    font-family: 'Arial', sans-serif;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  

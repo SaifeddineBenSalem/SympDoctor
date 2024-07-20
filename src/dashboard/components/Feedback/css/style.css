@@ -1,0 +1,78 @@
+#page-wrapper {
+  background-color: #f8f9fa;
+}
+
+.container-fluid {
+  background-color: #f8f9fa;
+}
+
+.card {
+  border-radius: 10px;
+  background-color: white;
+}
+
+.card h2 {
+  color: #333;
+}
+
+.form-group label {
+  font-weight: bold;
+  color: #555;
+}
+
+.form-control {
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+
+.star-rating {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.star-rating button {
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+.star-rating .on .star {
+  color: #ffdd00;
+}
+
+.star-rating .off .star {
+  color: #ddd;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  text-decoration: none;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}

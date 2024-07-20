@@ -1,0 +1,13 @@
+h4#diseaseName {
+    font-size: 2rem; /* Larger font size for the disease name */
+    color: #333; /* Dark text color */
+    text-transform: capitalize; /* Capitalize the disease name */
+    margin-top: 10px; /* Top margin */
+    margin-bottom: 30px; /* Bottom margin */
+    text-align: center; /* Center align the text */
+    padding: 10px; /* Add padding around the text */
+    background-color: #f8f9fa; /* Light gray background color */
+    border: 1px solid #ccc; /* Border around the box */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Box shadow for depth */
+  }

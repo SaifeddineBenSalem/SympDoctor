@@ -1,0 +1,20 @@
+.view-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    text-decoration: none;
+    margin-left:40px;
+    width:60%;
+  }
+  
+  .view-button:hover {
+    background-color: #0056b3;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }

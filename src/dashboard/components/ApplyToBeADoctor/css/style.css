@@ -1,0 +1,51 @@
+/* ApplyToBeADoctorBody.css */
+
+body {
+    font-family: 'Arial', sans-serif; /* Example of custom font */
+    font-size: 16px; /* Example of base font size */
+    line-height: 1.6; /* Example of line height adjustment */
+    color: #333; /* Example of text color */
+}
+
+.container-fluid {
+    max-width: 1200px; /* Limit container width for larger screens */
+    margin: 0 auto; /* Center align container */
+    padding: 0 15px; /* Add padding on the sides */
+}
+
+.card {
+    background-color: #fff; /* Card background color */
+    border-radius: 8px; /* Rounded corners */
+    border: 1px solid #ddd; /* Card border */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Card shadow */
+}
+
+.custom-file-input {
+    padding: 12px; /* Padding for file input */
+    background-color: #f5f5f5; /* File input background color */
+    border: 1px solid #ccc; /* File input border */
+    border-radius: 4px; /* File input border radius */
+}
+
+.custom-file-input:focus {
+    outline: none;
+    border-color: #66afe9; /* Focus color for file input */
+    box-shadow: 0 0 8px rgba(102, 175, 233, 0.6); /* Focus shadow for file input */
+}
+
+.btn-primary {
+    background-color: #007bff; /* Primary button background color */
+    border-color: #007bff; /* Primary button border color */
+    color: #fff; /* Primary button text color */
+}
+
+.btn-primary:hover {
+    background-color: #0056b3; /* Hover background color for primary button */
+    border-color: #0056b3; /* Hover border color for primary button */
+}
+
+.text-danger {
+    font-size: 14px; /* Error message font size */
+    font-weight: bold; /* Error message font weight */
+    color: #dc3545; /* Error message text color */
+}
