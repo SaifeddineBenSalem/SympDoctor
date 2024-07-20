@@ -1,0 +1,98 @@
+/* ContactForm.css */
+
+.site-footer {
+    background: #f8f9fa;
+    padding: 20px 0;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .site-footer .container {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .site-footer .row {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .logo-image {
+    max-width: 50px;
+    margin-right: 10px;
+  }
+  
+  .logo-text {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  
+  .logo-slogan {
+    font-size: 0.9rem;
+  }
+  
+  .site-footer-link {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .site-footer-link:hover {
+    text-decoration: underline;
+  }
+  
+  .contact-form-container {
+    background: linear-gradient(135deg, #f06, #4a90e2);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    color: #fff;
+  }
+  
+  .contact-form-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    outline: none;
+    box-sizing: border-box;
+  }
+  
+  .form-group input:focus,
+  .form-group textarea:focus {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    border-color: #4a90e2;
+  }
+  
+  .submit-btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #4a90e2;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .submit-btn:hover {
+    background-color: #f06;
+  }
+  
