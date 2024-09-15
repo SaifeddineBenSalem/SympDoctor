@@ -1,11 +1,13 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { UserContext } from '../../UserContext';
 import { PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
+
 const ChartsBody = () => {
   const { user, loading1 } = useContext(UserContext);
   const [diseases, setDiseases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState('All');
+  const [selectedMonth, setSelectedMonth] = useState('All');
 
   useEffect(() => {
     if (user) {
@@ -25,7 +27,7 @@ const ChartsBody = () => {
           setLoading(false);
         });
     }
-  }, [user]); // add user as a dependency
+  }, [user]);
 
   if (!user) {
     return (
@@ -35,7 +37,6 @@ const ChartsBody = () => {
             <div className="col-md-12">
               <h2>SympDoctor Dashboard </h2>
               <h5>Loading user data...</h5>
-              {/* You can add a spinner or loading indicator here */}
             </div>
           </div>
         </div>
@@ -50,7 +51,6 @@ const ChartsBody = () => {
             <div className="col-md-12">
               <h2>Choose your symptoms</h2>
               <h5>Loading symptoms data...</h5>
-              {/* You can add a spinner or loading indicator here */}
             </div>
           </div>
         </div>
@@ -66,13 +66,27 @@ const ChartsBody = () => {
   const allYears = Array.from(new Set(diseases.map(disease => parseDate(disease.date).getFullYear())));
   allYears.unshift('All');
 
+  // English month names
+  const englishMonths = [
+    'All', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  const allMonths = Array.from(new Set(diseases.map(disease => parseDate(disease.date).getMonth())));
+  allMonths.unshift('All');
+
   const handleYearChange = (event) => {
     setSelectedYear(event.target.value);
   };
 
-  const filteredDiseases = selectedYear === 'All'
-    ? diseases
-    : diseases.filter(disease => parseDate(disease.date).getFullYear().toString() === selectedYear);
+  const handleMonthChange = (event) => {
+    setSelectedMonth(event.target.value);
+  };
+
+  const filteredDiseases = diseases.filter(disease => {
+    const date = parseDate(disease.date);
+    const isYearMatch = selectedYear === 'All' || date.getFullYear().toString() === selectedYear;
+    const isMonthMatch = selectedMonth === 'All' || date.getMonth().toString() === selectedMonth;
+    return isYearMatch && isMonthMatch;
+  });
 
   const diseaseCounts = {};
   const diseasesByYear = {};
@@ -96,9 +110,12 @@ const ChartsBody = () => {
     }
   });
 
+  const totalDiseases = Object.values(diseaseCounts).reduce((sum, count) => sum + count, 0);
+
   const chartData = Object.keys(diseaseCounts).map(disease => ({
     name: disease,
     value: diseaseCounts[disease],
+    percentage: ((diseaseCounts[disease] / totalDiseases) * 100).toFixed(2),
   }));
 
   const barChartData = Object.keys(diseasesByYear).map(year => ({
@@ -125,12 +142,20 @@ const ChartsBody = () => {
             <h2>Charts</h2>
           </div>
         </div>
-        <div className="row" style={{ marginLeft: '200px',marginTop: '50px',marginBottom: '90px' }}>
+        <div className="row" style={{ marginLeft: '200px', marginTop: '50px', marginBottom: '90px' }}>
           <div className="col-md-4">
             <label htmlFor="yearSelect">Select Year:</label>
             <select id="yearSelect" value={selectedYear} onChange={handleYearChange} className="form-control">
               {allYears.map(year => (
                 <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+          </div>
+          <div className="col-md-4">
+            <label htmlFor="monthSelect">Select Month:</label>
+            <select id="monthSelect" value={selectedMonth} onChange={handleMonthChange} className="form-control">
+              {englishMonths.map((month, index) => (
+                <option key={index} value={index === 0 ? 'All' : (index - 1)}>{month}</option>
               ))}
             </select>
           </div>
@@ -145,25 +170,25 @@ const ChartsBody = () => {
                 cy={200}
                 outerRadius={100}
                 fill="#8884d8"
-                label={({ name, value }) => `${name}: ${value}`}
+                label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(2)}%)`}
                 dataKey="value"
               >
                 {chartData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value, name) => `${name}: ${value}`} />
+              <Tooltip formatter={(value, name, { payload }) => `${name}: ${value} (${payload.percentage}%)`} />
             </PieChart>
           </div>
         </div>
-        <hr style={{marginBottom:'100px'}} />
+        <hr style={{ marginBottom: '100px' }} />
         <div className="row" style={{ marginLeft: '200px' }}>
           <div className="container bootstrap snippets bootdeys">
             <BarChart width={600} height={300} data={barChartData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="year" />
               <YAxis />
-              <Tooltip />
+              <Tooltip formatter={(value, name, { payload }) => `${name}: ${value} (${((value / totalDiseases) * 100).toFixed(2)}%)`} />
               <Legend />
               {Object.keys(diseaseCounts).map((disease, index) => (
                 <Bar key={disease} dataKey={disease} fill={COLORS[index % COLORS.length]} />
@@ -171,8 +196,6 @@ const ChartsBody = () => {
             </BarChart>
           </div>
         </div>
-       
-        
       </div>
     </div>
   );

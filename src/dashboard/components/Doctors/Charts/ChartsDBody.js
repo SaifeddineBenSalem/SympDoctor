@@ -73,6 +73,7 @@ const ChartsBody = () => {
     setSelectedCountry(event.target.value);
   };
 
+  // Apply the filters for year, month, and country to the diseases
   const filteredDiseases = diseases.filter(disease => {
     const diseaseYear = parseDate(disease.date).getFullYear().toString();
     const diseaseMonth = (parseDate(disease.date).getMonth() + 1).toString();
@@ -81,6 +82,8 @@ const ChartsBody = () => {
     const isCountryMatch = selectedCountry === 'All' || disease.country === selectedCountry;
     return isYearMatch && isMonthMatch && isCountryMatch;
   });
+
+  const totalFilteredDiseasesCount = filteredDiseases.length;
 
   const diseaseCounts = {};
   const diseasesByYear = {};
@@ -107,6 +110,7 @@ const ChartsBody = () => {
   const chartData = Object.keys(diseaseCounts).map(disease => ({
     name: disease,
     value: diseaseCounts[disease],
+    percentage: ((diseaseCounts[disease] / totalFilteredDiseasesCount) * 100).toFixed(2)
   }));
 
   const barChartData = Object.keys(diseasesByYear).map(year => ({
@@ -126,7 +130,7 @@ const ChartsBody = () => {
   const COLORS = chartData.map(() => getRandomColor());
 
   const countryDiseaseCounts = {};
-  filteredDiseases.forEach(disease => {
+  diseases.forEach(disease => {
     if (countryDiseaseCounts[disease.country]) {
       if (countryDiseaseCounts[disease.country][disease.disease]) {
         countryDiseaseCounts[disease.country][disease.disease]++;
@@ -153,11 +157,22 @@ const ChartsBody = () => {
     .range(['#ffedea', '#ffcec5', '#ffad9f', '#ff8a75', '#ff5533', '#e2492d', '#be3d26', '#9a311f', '#782618']);
 
   return (
-    <div className="container" style={{ position: 'relative' }}>
-      <div className="row">
-        <div className="col-md-3">
-          <label>Year:</label>
-          <select value={selectedYear} onChange={handleYearChange}>
+    <div className="container" style={{ position: 'relative', padding: '20px' }}>
+      <div className="row" style={{ marginBottom: '20px' }}>
+        <div className="col-md-4">
+          <label style={{ fontWeight: 'bold', marginRight: '10px' }}>Year:</label>
+          <select
+            value={selectedYear}
+            onChange={handleYearChange}
+            style={{
+              padding: '10px',
+              borderRadius: '5px',
+              border: '1px solid #ccc',
+              fontSize: '16px',
+              width: '100%',
+              maxWidth: '200px',
+            }}
+          >
             {allYears.map(year => (
               <option key={year} value={year}>
                 {year}
@@ -165,9 +180,20 @@ const ChartsBody = () => {
             ))}
           </select>
         </div>
-        <div className="col-md-3">
-          <label>Month:</label>
-          <select value={selectedMonth} onChange={handleMonthChange}>
+        <div className="col-md-4">
+          <label style={{ fontWeight: 'bold', marginRight: '10px' }}>Month:</label>
+          <select
+            value={selectedMonth}
+            onChange={handleMonthChange}
+            style={{
+              padding: '10px',
+              borderRadius: '5px',
+              border: '1px solid #ccc',
+              fontSize: '16px',
+              width: '100%',
+              maxWidth: '200px',
+            }}
+          >
             {allMonths.map((month, index) => (
               <option key={index} value={month}>
                 {month}
@@ -175,9 +201,20 @@ const ChartsBody = () => {
             ))}
           </select>
         </div>
-        <div className="col-md-3">
-          <label>Country:</label>
-          <select value={selectedCountry} onChange={handleCountryChange}>
+        <div className="col-md-4">
+          <label style={{ fontWeight: 'bold', marginRight: '10px' }}>Country:</label>
+          <select
+            value={selectedCountry}
+            onChange={handleCountryChange}
+            style={{
+              padding: '10px',
+              borderRadius: '5px',
+              border: '1px solid #ccc',
+              fontSize: '16px',
+              width: '100%',
+              maxWidth: '200px',
+            }}
+          >
             {allCountries.map(country => (
               <option key={country} value={country}>
                 {country}
@@ -240,16 +277,25 @@ const ChartsBody = () => {
                         geography={geo}
                         fill={color}
                         onMouseEnter={(event) => {
+                          const { clientX, clientY } = event;
                           const { name } = geo.properties;
                           const diseaseData = mostPrevalentDiseaseByCountry.find(d => d.country === name);
+
+                          // Calculate the hover position to ensure it stays within the viewport
+                          const hoverX = Math.min(clientX - 400, window.innerWidth + 20); // Adjust 200 based on the hover box width
+                          const hoverY = Math.min(clientY - 300, window.innerHeight + 20); // Adjust 100 based on the hover box height
+
                           setHoveredCountry({
                             name,
                             disease: diseaseData ? diseaseData.disease : 'No data',
                             cases: diseaseData ? diseaseData.cases : 'No data',
+                            percentage: diseaseData
+                              ? ((diseaseData.cases / totalFilteredDiseasesCount) * 100).toFixed(2)
+                              : '0'
                           });
                           setHoverPosition({
-                            x: event.clientX,
-                            y: event.clientY,
+                            x: hoverX,
+                            y: hoverY,
                           });
                         }}
                         onMouseLeave={() => {
@@ -266,6 +312,7 @@ const ChartsBody = () => {
                 }
               </Geographies>
             </ComposableMap>
+
             {hoveredCountry && (
               <div
                 className="hover-info"
@@ -278,11 +325,13 @@ const ChartsBody = () => {
                   borderRadius: '5px',
                   boxShadow: '0 0 10px rgba(0,0,0,0.5)',
                   pointerEvents: 'none',
+                  fontSize: '14px',
                 }}
               >
                 <p><strong>Country:</strong> {hoveredCountry.name}</p>
                 <p><strong>Disease:</strong> {hoveredCountry.disease}</p>
                 <p><strong>Cases:</strong> {hoveredCountry.cases}</p>
+                <p><strong>Percentage:</strong> {hoveredCountry.percentage}%</p>
               </div>
             )}
           </div>

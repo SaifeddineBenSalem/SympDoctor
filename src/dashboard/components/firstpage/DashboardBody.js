@@ -159,9 +159,9 @@ const DashboardBody = () => {
       </div>
       <div className="col-md-3 col-sm-6 col-xs-6" >
         <div className="panel panel-back noti-box" style={{ height:127.5 }}>
-          <Link  to="/">
-            <span className="icon-box bg-color-green set-icon">
-              <i class="fa fa-user"></i>
+          <Link  to="/dashboard/feedback/list">
+            <span className="icon-box bg-color-red set-icon">
+              <i class="fa fa-comments"></i>
             </span>
           </Link>
           <div className="text-box">
@@ -170,28 +170,18 @@ const DashboardBody = () => {
           </div>
         </div>
       </div>
-      <div className="col-md-3 col-sm-6 col-xs-6">
-        <div className="panel panel-back noti-box">
-          <span className="icon-box bg-color-blue set-icon">
+      <div className="col-md-3 col-sm-6 col-xs-6" >
+        <div className="panel panel-back noti-box"  >
+          <span className="icon-box bg-color-blue set-icon"  >
             <i className="fa fa-bell-o"></i>
           </span>
           <div className="text-box">
-            <Link  className="main-text"  to="/dashboard/charts">Charts </Link>
+            <Link  className="main-text"  to="/dashboard/doctors/charts">Doctor Charts </Link>
             <p className="text-muted">‎</p>
           </div>
         </div>
       </div>
-      <div className="col-md-3 col-sm-6 col-xs-6">
-        <div className="panel panel-back noti-box">
-          <span className="icon-box bg-color-brown set-icon">
-            <i className="fa fa-rocket"></i>
-          </span>
-          <div className="text-box">
-            <p className="main-text">3 Orders</p>
-            <p className="text-muted">‎</p>
-          </div>
-        </div>
-      </div>
+     
     </div>
     <hr />
   </React.Fragment>

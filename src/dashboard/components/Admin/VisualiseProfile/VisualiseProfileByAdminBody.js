@@ -321,17 +321,73 @@ const VisualiseProfile = () => {
                     </div>
                   </div>
                   <div className="panel panel-default">
+                      <div className="panel-heading">
+                        <h4 className="panel-title">Doctor info</h4>
+                      </div>
+                      <div className="panel-body">
+                        <div className="form-group">
+                          <label className="col-sm-2 control-label" style={{ whiteSpace: 'nowrap' }}>Posted diseases</label>
+                          <div className="col-sm-10">
+                            <p style={{ fontSize: 19, marginTop: -20 }}>{user1.posted_disease}</p>
+                          </div>
+                        </div>
+                        <div className="form-group">
+                          <label className="col-sm-2 control-label" style={{ whiteSpace: 'nowrap' }}>Accepted diseases</label>
+                          <div className="col-sm-10">
+                            <p style={{ fontSize: 19, marginTop: -20 }}>{user1.accepted_disease}</p>
+                          </div>
+                        </div>
+                        <div className="form-group">
+                          <label className="col-sm-2 control-label" style={{ whiteSpace: 'nowrap' }}>Rejected diseases</label>
+                          <div className="col-sm-10">
+                            <p style={{ fontSize: 19, marginTop: -19 }}>{user1.refused_disease}</p>
+                          </div>
+                        </div>
+                        <div className="form-group">
+                          <label className="col-sm-2 control-label" style={{ whiteSpace: 'nowrap' }}>Accepting diseases</label>
+                          <div className="col-sm-10">
+                            <p style={{ fontSize: 20, marginTop: -20 }}>{user1.accepting_disease}</p>
+                          </div>
+                        </div>
+                        <div className="form-group">
+                          <label className="col-sm-2 control-label" style={{ whiteSpace: 'nowrap' }}>Refusing diseases</label>
+                          <div className="col-sm-10">
+                            <p style={{ fontSize: 20, marginTop: -20 }}>{user1.refusing_disease}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  <div className="panel panel-default">
+                    <div className="panel-heading">
+                      <h4 className="panel-title">Super Doctor info</h4>
+                    </div>
+                    <div className="panel-body">
+                      <div className="form-group">
+                        <label className="col-sm-2 control-label" style={{ whiteSpace: 'nowrap' }}>Accepted diseases</label>
+                        <div className="col-sm-10">
+                          <p style={{ fontSize: 19, marginTop: -20 }}>{user1.super_accepted_diseases}</p>
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <label className="col-sm-2 control-label" style={{ whiteSpace: 'nowrap' }}>Refused diseases</label>
+                        <div className="col-sm-10">
+                          <p style={{ fontSize: 19, marginTop: -20 }}>{user1.super_refused_diseases}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="panel panel-default">
                     <div className="panel-heading">
                       <h4 className="panel-title">Security</h4>
                     </div>
                     <div className="panel-body">
-                      {user.role === "admin" && (
+                      {user.role === "admin" || user.role === "SuperAdmin"  && (
                         <>
                           <div className="form-group">
                             <label className="col-sm-2 control-label">Last logged in IP </label>
                             <div className="col-sm-10">
                               <p style={{ fontSize: 20, marginTop: -20 }}>
-                                {user1.address ? user1.address : '-'}
+                                {user1.ip ? user1.ip : '-'}
                               </p>
                             </div>
                           </div>

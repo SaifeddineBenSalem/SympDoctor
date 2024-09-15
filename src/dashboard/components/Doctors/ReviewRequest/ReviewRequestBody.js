@@ -326,8 +326,8 @@ const ReviewRequestBody = () => {
                     {currentDisease.poster != user.id && currentDisease.status === "Pending" && alreadyHandler == true && (
                     <td style={{ padding: '10px', border: '1px solid #ddd' }}>
                         <React.Fragment>
-                          <button onClick={handleApprove}>Approve</button>
-                          <button onClick={handleRejectClick}>Disapprove</button>
+                          <button className="btn btn-success" style={{ padding: '10px 30px', fontSize: '10px', fontWeight: 'bold',marignLeft:'30px',marginRight:'20px' }} onClick={handleApprove}>Approve</button>
+                          <button className="btn btn-danger" style={{ padding: '10px 30px', fontSize: '10px', fontWeight: 'bold',marginLeft:'-90px',float:'right' }} onClick={handleRejectClick}>Disapprove</button>
                         </React.Fragment>
                      
                     </td>
@@ -360,8 +360,8 @@ const ReviewRequestBody = () => {
         <hr style={{ margin: '20px 0' }} />
         {user.role ==="SuperDoctor" && currentDisease.status === "Pending" && currentDisease.poster != user.id  && (
          <React.Fragment>
-          <button onClick={handleApproveSuperDoctor}>Add</button>
-          <button  onClick={handleDisapproveBySuperDoctor} >Refuse </button>
+          <button  className="btn btn-success" style={{ padding: '10px 20px', fontSize: '18px', fontWeight: 'bold' }} onClick={handleApproveSuperDoctor}>Add</button>
+          <button  className="btn btn-danger" style={{ padding: '10px 20px', fontSize: '18px', fontWeight: 'bold' }}  onClick={handleDisapproveBySuperDoctor} >Refuse </button>
           </React.Fragment>
         )}
         {TextareaForSuperDoctor && (

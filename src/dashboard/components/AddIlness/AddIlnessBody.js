@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { UserContext } from '../../UserContext';
-import './css/style.css';
 
 const AddIlnessBody = () => {
   const { user, loading1 } = useContext(UserContext);
@@ -8,12 +7,13 @@ const AddIlnessBody = () => {
   const [selectedSymptoms, setSelectedSymptoms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [disease, setDisease] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetch('http://localhost:5000/api/diseases/getsymptoms')
       .then(response => response.json())
       .then(data => {
-        const symptomsArray = data.split(','); // Split the comma-separated string into an array
+        const symptomsArray = data.split(',');
         setSymptoms(symptomsArray);
         setLoading(false);
       })
@@ -34,11 +34,7 @@ const AddIlnessBody = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Assuming selectedSymptoms is an array
-console.log('Selected Symptoms:', selectedSymptoms);
-
-// Convert user.id to string and add it to the array
-selectedSymptoms.push(String(user.id)); // or selectedSymptoms.push(user.id.toString());
+    selectedSymptoms.push(String(user.id));
 
     fetch('http://localhost:5000/api/diseases/finddiseases', {
       method: 'POST',
@@ -47,16 +43,28 @@ selectedSymptoms.push(String(user.id)); // or selectedSymptoms.push(user.id.toSt
       },
       body: JSON.stringify({ symptoms: selectedSymptoms }),
     })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Diseases found:', data);
-      setDisease(data);
-      // Handle the response data as needed
-    })
-    .catch(error => {
-      console.error('Error finding diseases:', error);
-    });
+      .then(response => response.json())
+      .then(data => {
+        setDisease(data);
+      })
+      .catch(error => {
+        console.error('Error finding diseases:', error);
+      });
   };
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredSymptoms = symptoms.filter(symptom => {
+    // Replace underscores with spaces for the search comparison
+    const formattedSymptom = symptom.replace(/_/g, ' ');
+    const formattedSearchTerm = searchTerm.replace(/_/g, ' ');
+    
+    // Check if formatted symptom includes formatted search term
+    return formattedSymptom.toLowerCase().includes(formattedSearchTerm.toLowerCase());
+  });
+  
 
   if (!user) {
     return (
@@ -66,7 +74,6 @@ selectedSymptoms.push(String(user.id)); // or selectedSymptoms.push(user.id.toSt
             <div className="col-md-12">
               <h2>SympDoctor Dashboard</h2>
               <h5>Loading user data...</h5>
-              {/* You can add a spinner or loading indicator here */}
             </div>
           </div>
         </div>
@@ -82,7 +89,6 @@ selectedSymptoms.push(String(user.id)); // or selectedSymptoms.push(user.id.toSt
             <div className="col-md-12">
               <h2>Choose your symptoms</h2>
               <h5>Loading symptoms data...</h5>
-              {/* You can add a spinner or loading indicator here */}
             </div>
           </div>
         </div>
@@ -95,22 +101,36 @@ selectedSymptoms.push(String(user.id)); // or selectedSymptoms.push(user.id.toSt
       <div id="page-inner">
         <div className="row">
           <div className="col-md-12">
-            <h2>Choose your symptoms</h2>
-            <h5>Dear {user.first_name} {user.last_name}, Please choose your symptoms.</h5>
+            <h2 style={{ fontSize: '24px', fontWeight: 'bold' }}>Choose your symptoms</h2>
+            <h5 style={{ fontSize: '18px' }}>Dear {user.first_name} {user.last_name}, please select your symptoms below.</h5>
           </div>
         </div>
         <hr />
         <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <input 
+              type="text" 
+              placeholder="Search symptoms..." 
+              className="form-control"
+              style={{ marginBottom: '20px', fontSize: '16px', padding: '10px' }}
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+          </div>
           <div className="row">
-            {symptoms.map((symptom, index) => (
-              <div className="col-md-4" key={index}>
-                <div className="form-group">
-                  <label>
-                    <input 
-                      type="checkbox" 
-                      value={symptom} 
-                      onChange={handleCheckboxChange} 
-                    /> {symptom}
+            {filteredSymptoms.map((symptom, index) => (
+              <div className="col-md-4" key={index} style={{ marginBottom: '15px' }}>
+                <div className="form-check">
+                  <input 
+                    className="form-check-input" 
+                    type="checkbox" 
+                    value={symptom} 
+                    onChange={handleCheckboxChange} 
+                    id={`symptom-${index}`}
+                    style={{ transform: 'scale(1.2)' }}
+                  />
+                  <label className="form-check-label" htmlFor={`symptom-${index}`} style={{ fontSize: '16px', fontWeight: 'bold', marginLeft: '8px' }}>
+                    {symptom.replace(/_/g, ' ')}
                   </label>
                 </div>
               </div>
@@ -118,15 +138,39 @@ selectedSymptoms.push(String(user.id)); // or selectedSymptoms.push(user.id.toSt
           </div>
           <hr />
           <div className="row">
-            <div className="col-md-12">
-              <button type="submit" className="btn btn-primary">Submit</button>
+            <div className="col-md-12 d-flex justify-content-center">
+              <button type="submit" className="btn btn-primary" style={{ padding: '10px 20px', fontSize: '18px', fontWeight: 'bold' }}>Submit</button>
             </div>
           </div>
-          
-         
         </form>
-        <hr/>
-        <h4 id="diseaseName"> {disease} </h4>
+        {disease && (
+          <div className="row">
+            <div className="col-md-12 d-flex justify-content-center">
+              <div 
+                className="disease-box" 
+                style={{ 
+                  backgroundColor: '#e0f7fa', 
+                  borderRadius: '12px', 
+                  padding: '20px 30px', 
+                  marginTop: '30px', 
+                  boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
+                  border: '1px solid #b2ebf2',
+                  textAlign: 'center',
+                  fontSize: '20px',
+                  fontWeight: 'bold',
+                  color: '#00796b',
+                  backgroundImage: 'linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%)',
+                  transition: 'transform 0.3s',
+                  transform: 'scale(1)',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+              >
+                {disease}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

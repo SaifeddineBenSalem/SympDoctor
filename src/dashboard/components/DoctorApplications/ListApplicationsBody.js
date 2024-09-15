@@ -3,6 +3,30 @@ import { UserContext } from '../../UserContext';
 import { Link, useNavigate } from 'react-router-dom';
 
 const ListApplicationsBody = () => {
+  const successBadgeStyle = {
+    backgroundColor: 'green', // Success color
+    color: 'white',           // Text color
+    padding: '5px 10px',      // Padding for the badge
+    borderRadius: '5px',      // Rounded corners
+    fontWeight: 'bold',       // Bold text
+    display: 'inline-block'   // Display as an inline block element
+  };
+  const rejectionBadgeStyle = {
+    backgroundColor: 'red', // Success color
+    color: 'white',           // Text color
+    padding: '5px 10px',      // Padding for the badge
+    borderRadius: '5px',      // Rounded corners
+    fontWeight: 'bold',       // Bold text
+    display: 'inline-block'   // Display as an inline block element
+  };
+  const PendingBadgeStyle = {
+    backgroundColor: '#C2B280', // Success color
+    color: 'white',           // Text color
+    padding: '5px 10px',      // Padding for the badge
+    borderRadius: '5px',      // Rounded corners
+    fontWeight: 'bold',       // Bold text
+    display: 'inline-block'   // Display as an inline block element
+  };
   const history = useNavigate();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -153,15 +177,34 @@ const ListApplicationsBody = () => {
                     {(user.role === "Admin" || user.role === "SuperAdmin") && (
                       <React.Fragment>
                         <td style={{ padding: '10px', border: '1px solid #ddd' }}>
-                          <Link to={`/dashboard/profile/${disease.id}`} >{disease.applicantData?.first_name +' '+ disease.applicantData?.last_name}</Link>
+                          <Link target="_blank" to={`/dashboard/profile/${disease.id}`} >{disease.applicantData?.first_name +' '+ disease.applicantData?.last_name}</Link>
                         </td>
                       </React.Fragment>
                     )}
                     <td style={{ padding: '10px', border: '1px solid #ddd' }}>{disease.posting_date}</td>
-                    <td style={{ padding: '10px', border: '1px solid #ddd' }}>{disease.status}</td>
+                    <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                    {(disease.status === "Accepted" && (
+                                              <React.Fragment>
+                                                    <span style={successBadgeStyle}>{disease.status}</span>
+                                              </React.Fragment>
+                    ))}
+                    {(disease.status === "Declined" && (
+                                              <React.Fragment>
+                                                    <span style={rejectionBadgeStyle}>{disease.status}</span>
+                                                </React.Fragment>
+                    ))}
+                     {(disease.status === "Pending" && (
+                                              <React.Fragment>
+                                                    <span style={PendingBadgeStyle}>{disease.status}</span>
+                                                </React.Fragment>
+                    ))}
+
+
+
+                    </td>
                     <td style={{ padding: '10px', border: '1px solid #ddd' }}>
                       <Link to={`/dashboard/apply/view/${disease.id}`}>
-                        <button style={{ backgroundColor: '#fff', border: 'none', borderRadius: '5px', padding: '10px 20px', cursor: 'pointer', color: '#337ab7' }}>View</button>
+                      <button className='view-button' style={{marginLeft:'20px'}}> View </button>
                       </Link>
                     </td>
                   </tr>

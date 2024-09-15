@@ -1,5 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { UserContext } from '../../UserContext';
+import { Link } from 'react-router-dom';
+import styled, { keyframes } from 'styled-components';
 
 const AddDisease = () => {
   const { user, loading1 } = useContext(UserContext);
@@ -10,6 +12,7 @@ const AddDisease = () => {
   const [symptoms, setSymptoms] = useState([]);
   const [inputs, setInputs] = useState([{ value: '' }]);
   const token = localStorage.getItem('token');  // Retrieve the token from local storage
+  const [searchTerm, setSearchTerm] = useState('');
 
   const [diseaseName, setDiseaseName] = useState(null);
   const [showForm, setShowForm] = useState(true); // State to control form visibility
@@ -54,38 +57,86 @@ const AddDisease = () => {
     console.log('Selected Symptoms:', selectedSymptoms);
     setShowForm1(true);
   };
-
-  const handleSubmit = (event) => {
+  const fetchIdOfPendingDisease = async (newDiseaseName) => {
+    try {
+      const response = await fetch('http://localhost:5000/api/diseases/getidofpendingdiseasebyname', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ diseasename2 : newDiseaseName }),
+      });
+      const data = await response.json();
+      console.log('Additional data:', data);
+      console.log(diseaseName);
+      // Process the data as needed
+      // For example, update state or handle errors
+      return data.id;
+    } catch (error) {
+      console.error('Error fetching additional data:', error);
+      // Handle the error, e.g., set an error message state
+    }
+  };
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const form = event.target;
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
-    setDiseaseName(data.diseasename);
-    fetch('http://localhost:5000/api/diseases/finddiseasebynameaddingdisease', {
+    const newDiseaseName = data.diseasename;
+    
+    setDiseaseName(newDiseaseName);
+    
+    const response = await fetch('http://localhost:5000/api/diseases/finddiseasebynameaddingdisease', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ diseasename: data.diseasename }), // Adjust based on how you collect diseasename from the form
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Diseases found:', data);
-        if (data.exists) {
-          // Handle the case when the disease already exists
-          setExistDisease(true);
-          setErrorMessage(data.message);
-        } else {
-          // Handle the case when the disease does not exist
-          setExistDisease(false);
-          setDisease({ found: false, message: data.message });
-          setShowForm(false); // Hide the current form
-        }
-      })
-      .catch(error => {
-        console.error('Error finding diseases:', error);
-      });
+      body: JSON.stringify({ diseasename: newDiseaseName }),
+    });
+    
+    const result = await response.json();
+    console.log('Diseases found:', result);
+  
+    if (result.exists) {
+      setExistDisease(true);
+      if (result.message === 'Disease found in the final dataset.') {
+        setErrorMessage(
+          <div>
+            {result.message} <Link to={`/dashboard/doctors/diseases/${newDiseaseName}`} target="_blank">
+              Click here to view more details
+            </Link>
+          </div>
+        );
+      } else {
+        const id = await fetchIdOfPendingDisease(newDiseaseName);
+        console.log(id);
+        setErrorMessage(
+          <div>
+            {result.message} <Link to={`/dashboard/doctors/pending/review/${id}`} target="_blank">
+              Click here to view more details
+            </Link>
+          </div>
+        );
+      }
+    } else {
+      setExistDisease(false);
+      setDisease({ found: false, message: result.message });
+      setShowForm(false);
+    }
   };
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredSymptoms = symptoms.filter(symptom => {
+    // Replace underscores with spaces for the search comparison
+    const formattedSymptom = symptom.replace(/_/g, ' ');
+    const formattedSearchTerm = searchTerm.replace(/_/g, ' ');
+    
+    // Check if formatted symptom includes formatted search term
+    return formattedSymptom.toLowerCase().includes(formattedSearchTerm.toLowerCase());
+  });
+  
 
   const handleFinalSubmit = (event) => {
     event.preventDefault();
@@ -104,10 +155,8 @@ const AddDisease = () => {
     })
       .then(response => response.json())
       .then(data => {
-        
         console.log('Response from final submission:', data);
         window.location.href = `/dashboard/doctors/add`;
-
         // Handle the response after submission
       })
       .catch(error => {
@@ -152,15 +201,15 @@ const AddDisease = () => {
       <div id="page-inner">
         <div className="row">
           <div className="col-md-12">
-            <h2>Add your disease</h2>
-            {showForm1 ? (
-              <h5>Last step of confirming the disease: {diseaseName}</h5>
+          <h2 style={{ fontSize: '24px', fontWeight: 'bold' }}>Add your disease</h2>
+          {showForm1 ? (
+              <h5 style={{ fontSize: '18px' }}>Last step of confirming the disease: {diseaseName}</h5>
             ) : (
               <React.Fragment>
                 {showForm ? (
-                  <h5>Write the disease name:</h5>
+                <h5 style={{ fontSize: '18px' }}>Write the disease name:</h5>
                 ) : (
-                  <h5>You are trying to add the disease named as: {diseaseName}</h5>
+                  <h5 style={{ fontSize: '18px' }}>You are trying to add the disease named as: {diseaseName}</h5>
                 )}
               </React.Fragment>
             )}
@@ -174,66 +223,26 @@ const AddDisease = () => {
         )}
         {showForm1 ? (
           <React.Fragment>
-            <h5>Last step of confirming the disease: {diseaseName}</h5>
-            <form style={{ marginLeft: 350, marginTop: 40 }} onSubmit={handleFinalSubmit}>
-              {inputs.map((input, index) => (
-                <div key={index}>
-                  <input
-                    type="text"
-                    style={{
-                      padding: 10,
-                      fontSize: 16,
-                      border: "1px solid #ccc",
-                      borderRadius: 5,
-                      width: 300,
-                    }}
-                    value={input.value}
-                    onChange={(event) => handleInputChange(index, event)}
-                  />
-                </div>
-              ))}
-              <div style={{ position: "relative" }}>
-                <button
-                  style={{
-                    right: 40,
-                    bottom: 0,
-                    padding: 5,
-                    fontSize: 16,
-                    border: "none",
-                    borderRadius: 5,
-                    backgroundColor: "#4CAF50",
-                    color: "white",
-                    cursor: "pointer",
-                    height: 40,
-                    width: 80,
-                  }}
-                  type="submit"
-                >
-                  Submit
-                </button>
-                <button
-                  style={{
-                    marginLeft: 188,
-                    right: 0,
-                    bottom: 0,
-                    padding: 5,
-                    fontSize: 16,
-                    border: "none",
-                    borderRadius: 5,
-                    backgroundColor: "#4CAF50",
-                    color: "white",
-                    cursor: "pointer",
-                    height: 40,
-                    width: 40,
-                  }}
-                  type="button"
-                  onClick={handleAddInput}
-                >
-                  +
-                </button>
-              </div>
-            </form>
-          </React.Fragment>
+          <Form onSubmit={handleFinalSubmit} style={{marginLeft:20}}>
+      {inputs.map((input, index) => (
+        <InputContainer key={index}>
+          <Input
+            type="text"
+            value={input.value}
+            onChange={(event) => handleInputChange(index, event)}
+          />
+        </InputContainer>
+      ))}
+      <ButtonContainer>
+        <SubmitButton type="submit">
+          Submit
+        </SubmitButton>
+        <AddButton type="button" onClick={handleAddInput}>
+          +
+        </AddButton>
+      </ButtonContainer>
+    </Form>
+        </React.Fragment>
         ) : (
           <React.Fragment>
             {showForm ? (
@@ -252,23 +261,36 @@ const AddDisease = () => {
               </form>
             ) : (
               <div>
-                <h6 style={{ marginBottom: 20 }}>As a first step, select the existent symptoms that reflect this disease</h6>
                 <form onSubmit={handleSubmitSymtoms}>
-                  <div className="row">
-                    {symptoms.map((symptom, index) => (
-                      <div className="col-md-4" key={index}>
-                        <div className="form-group">
-                          <label>
-                            <input
-                              type="checkbox"
-                              value={symptom}
-                              onChange={handleCheckboxChange}
-                            /> {symptom}
-                          </label>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                <div className="form-group">
+                    <input 
+                      type="text" 
+                      placeholder="Search symptoms..." 
+                      className="form-control"
+                      style={{ marginBottom: '20px', fontSize: '16px', padding: '10px' }}
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+                    />
+                 </div>
+                 <div className="row">
+            {filteredSymptoms.map((symptom, index) => (
+              <div className="col-md-4" key={index} style={{ marginBottom: '15px' }}>
+                <div className="form-check">
+                  <input 
+                    className="form-check-input" 
+                    type="checkbox" 
+                    value={symptom} 
+                    onChange={handleCheckboxChange} 
+                    id={`symptom-${index}`}
+                    style={{ transform: 'scale(1.2)' }}
+                  />
+                  <label className="form-check-label" htmlFor={`symptom-${index}`} style={{ fontSize: '16px', fontWeight: 'bold', marginLeft: '8px' }}>
+                    {symptom.replace(/_/g, ' ')}
+                  </label>
+                </div>
+              </div>
+            ))}
+          </div>
                   <hr />
                   <div className="row">
                     <div className="col-md-12">
@@ -284,5 +306,119 @@ const AddDisease = () => {
     </div>
   );
 };
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const slideDown = keyframes`
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+`;
+
+const slideUp = keyframes`
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+`;
+
+const rotateIn = keyframes`
+  from {
+    transform: rotate(-360deg);
+    opacity: 0;
+  }
+  to {
+    transform: rotate(0);
+    opacity: 1;
+  }
+`;
+
+const Form = styled.form`
+  margin-left: 350px;
+  margin-top: 40px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+  animation: ${fadeIn} 1s ease-out;
+`;
+
+const InputContainer = styled.div`
+  margin-bottom: 15px;
+  animation: ${slideDown} 0.5s ease-out;
+`;
+
+const Input = styled.input`
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+  transition: all 0.3s ease;
+
+  &:focus {
+    border-color: #4caf50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+  }
+`;
+
+const ButtonContainer = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const SubmitButton = styled.button`
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+  height: 40px;
+  width: 100px;
+  transition: all 0.3s ease;
+  animation: ${slideUp} 0.5s ease-out;
+
+  &:hover {
+    background-color: #45a049;
+  }
+`;
+
+const AddButton = styled.button`
+  padding: 10px;
+  font-size: 20px;
+  border: none;
+  border-radius: 50%;
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+  height: 40px;
+  width: 40px;
+  margin-left: 20px;
+  transition: all 0.3s ease;
+  animation: ${rotateIn} 0.5s ease-out;
+
+  &:hover {
+    background-color: #45a049;
+  }
+`;
+
 
 export default AddDisease;

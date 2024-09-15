@@ -4,11 +4,12 @@ import { Link } from 'react-router-dom';
 
 const PendingBody = () => {
   const { user, loading1 } = useContext(UserContext);
-  const [pendingDiseases, setPendingDiseases] = useState({});
+  const [pendingDiseases, setPendingDiseases] = useState([]);
   const [selectedYear, setSelectedYear] = useState('All');
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [diseasesPerPage] = useState(5); // Number of diseases to display per page
+  const [diseasesPerPage] = useState(5);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchPendingDiseases();
@@ -24,10 +25,13 @@ const PendingBody = () => {
     })
       .then(response => response.json())
       .then(data => {
-        setPendingDiseases(prevDiseases => ({
-          ...prevDiseases,
-          [data.id]: data
-        }));
+        setPendingDiseases(prevDiseases => {
+          const isDuplicate = prevDiseases.some(disease => disease.id === data.id);
+          if (!isDuplicate) {
+            return [...prevDiseases, data];
+          }
+          return prevDiseases;
+        });
         setLoading(false);
       })
       .catch(error => {
@@ -57,11 +61,22 @@ const PendingBody = () => {
       });
   };
 
-  // Pagination logic
-  const diseaseArray = Object.values(pendingDiseases);
   const indexOfLastDisease = currentPage * diseasesPerPage;
   const indexOfFirstDisease = indexOfLastDisease - diseasesPerPage;
-  const currentDiseases = diseaseArray.slice(indexOfFirstDisease, indexOfLastDisease);
+  const filteredApplications = pendingDiseases.filter(application => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      (application.id?.toString().toLowerCase().includes(searchLower)) ||
+      (application.name?.toLowerCase().includes(searchLower)) ||
+      (typeof application.poster === 'string' && application.poster.toLowerCase().includes(searchLower)) ||
+      (application.posting_date?.toLowerCase().includes(searchLower)) ||
+      (application.status?.toLowerCase().includes(searchLower)) ||
+      (application.count?.toString().toLowerCase().includes(searchLower))
+    );
+  });
+  
+
+  const currentDiseases = filteredApplications.slice(indexOfFirstDisease, indexOfLastDisease);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -83,16 +98,22 @@ const PendingBody = () => {
     <div id="page-wrapper" style={{ marginLeft: '-6px' }}>
       <div id="page-inner">
         <div className="row">
-          <div className="col-md-12" style={{ marginLeft: '479px' }}>
-            <h2 style={{ textAlign: 'center' }}>Charts</h2>
+          <div className="col-md-12" >
+            <h2 style={{ textAlign: 'center' }}>Pending Diseases</h2>
           </div>
         </div>
 
-        {/* Render list of pending diseases as a table */}
         <div className="row">
           <div className="col-md-12">
-            <h3 style={{ marginBottom: '15px', borderBottom: '1px solid #ddd', paddingBottom: '5px' }}>Pending Diseases</h3>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <h3 style={{ marginBottom: '15px', borderBottom: '1px solid #ddd', paddingBottom: '5px', marginTop: '20px' }}>Pending Diseases</h3>
+            <input
+              type="text"
+              placeholder="Search by file name, applicant, posting date, or status"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ marginBottom: '10px', padding: '10px', width: '100%' }}
+            />
+            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
               <thead>
                 <tr style={{ background: '#f9f9f9', borderBottom: '1px solid #ddd' }}>
                   <th style={{ padding: '10px', border: '1px solid #ddd' }}>ID</th>
@@ -100,7 +121,6 @@ const PendingBody = () => {
                   <th style={{ padding: '10px', border: '1px solid #ddd' }}>Poster</th>
                   <th style={{ padding: '10px', border: '1px solid #ddd' }}>Posting Date</th>
                   <th style={{ padding: '10px', border: '1px solid #ddd' }}>Status</th>
-                  <th style={{ padding: '10px', border: '1px solid #ddd' }}>Count</th>
                   <th style={{ padding: '10px', border: '1px solid #ddd' }}>Action</th>
                 </tr>
               </thead>
@@ -112,12 +132,10 @@ const PendingBody = () => {
                     <td style={{ padding: '10px', border: '1px solid #ddd' }}>{disease.poster}</td>
                     <td style={{ padding: '10px', border: '1px solid #ddd' }}>{disease.posting_date}</td>
                     <td style={{ padding: '10px', border: '1px solid #ddd' }}>{disease.status}</td>
-                    <td style={{ padding: '10px', border: '1px solid #ddd' }}>{disease.count}</td>
                     <td style={{ padding: '10px', border: '1px solid #ddd' }}>
-                      
-                    <Link to={`/dashboard/doctors/pending/review/${disease.id}`}>
-  <button style={{ backgroundColor: '#fff', border: 'none', borderRadius: '5px', padding: '10px 20px', cursor: 'pointer', color: '#337ab7' }}>Action</button>
-</Link>
+                      <Link to={`/dashboard/doctors/pending/review/${disease.id}`}>
+                        <button style={{ backgroundColor: '#fff', border: 'none', borderRadius: '5px', padding: '10px 20px', cursor: 'pointer', color: '#337ab7' }}>Action</button>
+                      </Link>
                     </td>
                   </tr>
                 ))}
@@ -129,10 +147,23 @@ const PendingBody = () => {
         {/* Pagination */}
         <div className="row" style={{ marginTop: '20px' }}>
           <div className="col-md-12">
-            <ul className="pagination" style={{ display: 'flex', justifyContent: 'center' }}>
-              {Array.from({ length: Math.ceil(diseaseArray.length / diseasesPerPage) }).map((_, index) => (
+            <ul className="pagination" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 0, listStyleType: 'none' }}>
+              {Array.from({ length: Math.ceil(filteredApplications.length / diseasesPerPage) }).map((_, index) => (
                 <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`} style={{ margin: '0 5px' }}>
-                  <button className="page-link" onClick={() => paginate(index + 1)} style={{ padding: '5px 10px', border: '1px solid #ddd', backgroundColor: currentPage === index + 1 ? '#007bff' : '#fff', color: currentPage === index + 1 ? '#fff' : '#007bff', cursor: 'pointer' }}>
+                  <button
+                    className="page-link"
+                    onClick={() => paginate(index + 1)}
+                    style={{
+                      padding: '10px 15px',
+                      border: '1px solid #ddd',
+                      borderRadius: '50%',
+                      backgroundColor: currentPage === index + 1 ? '#007bff' : '#fff',
+                      color: currentPage === index + 1 ? '#fff' : '#007bff',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center'
+                    }}>
                     {index + 1}
                   </button>
                 </li>

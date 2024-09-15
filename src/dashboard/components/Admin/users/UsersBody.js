@@ -92,12 +92,12 @@ const UsersBody = () => {
       <div id="page-inner">
         <div className="row">
           <div className="col-md-12">
-            <h2 style={{ textAlign: 'center' }}>Applications List</h2>
+            <h2 style={{ textAlign: 'center' }}>Users List</h2>
           </div>
         </div>
         <div className="row">
           <div className="col-md-12">
-            <h3 style={{ marginBottom: '15px', borderBottom: '1px solid #ddd', paddingBottom: '5px' }}>Applications </h3>
+            <h3 style={{ marginBottom: '15px', borderBottom: '1px solid #ddd', paddingBottom: '5px' }}>‎  </h3>
             <input
               type="text"
               placeholder="Search by name, email, or role"
@@ -126,7 +126,8 @@ const UsersBody = () => {
                     <td style={{ padding: '10px', border: '1px solid #ddd' }}>{disease.last_login}</td>
                     <td style={{ padding: '10px', border: '1px solid #ddd' }}>
                       <Link to={`/dashboard/profile/${disease.id}`}>
-                        <button style={{ backgroundColor: '#fff', border: 'none', borderRadius: '5px', padding: '10px 20px', cursor: 'pointer', color: '#337ab7' }}>View profile</button>
+                        <button className='view-button' style={{marginLeft:'20px'}}>
+                          View profile</button>
                       </Link>
                     </td>
                   </tr>
@@ -137,10 +138,23 @@ const UsersBody = () => {
         </div>
         <div className="row" style={{ marginTop: '20px' }}>
           <div className="col-md-12">
-            <ul className="pagination" style={{ display: 'flex', justifyContent: 'center' }}>
+          <ul className="pagination" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 0, listStyleType: 'none' }}>
               {Array.from({ length: Math.ceil(filteredApplications.length / diseasesPerPage) }).map((_, index) => (
                 <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`} style={{ margin: '0 5px' }}>
-                  <button className="page-link" onClick={() => paginate(index + 1)} style={{ padding: '5px 10px', border: '1px solid #ddd', backgroundColor: currentPage === index + 1 ? '#007bff' : '#fff', color: currentPage === index + 1 ? '#fff' : '#007bff', cursor: 'pointer' }}>
+                  <button 
+                    className="page-link" 
+                    onClick={() => paginate(index + 1)} 
+                    style={{ 
+                      padding: '10px 15px', 
+                      border: '1px solid #ddd', 
+                      borderRadius: '50%', 
+                      backgroundColor: currentPage === index + 1 ? '#007bff' : '#fff', 
+                      color: currentPage === index + 1 ? '#fff' : '#007bff', 
+                      cursor: 'pointer',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center'
+                    }}>
                     {index + 1}
                   </button>
                 </li>
