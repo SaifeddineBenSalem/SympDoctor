@@ -45,9 +45,32 @@ const LoginForm1 = () => {
     <div className="col-lg-6 col-12">
       <form className="custom-form hero-form" onSubmit={handleSubmit} method="post" role="form">
         <h3 className="text-white mb-3 text-center">Login</h3>
-        <div id="error-message" className="col-12 text-center" style={{ color: 'darkred', marginTop: '10px', marginBottom: '10px' }}>
+        {errorMessage && (
+                <div
+          id="error-message"
+          className="col-12"
+          style={{
+            color: 'white', // Text color
+            backgroundColor: 'red', // Background color
+            fontSize: '18px',
+            marginTop: '20px',
+            marginBottom: '20px',
+            padding: '15px 20px', // Increased padding for a more spacious look
+            borderRadius: '8px', // More pronounced rounded corners
+            border: '1px solid #d9534f', // Darker border for contrast
+            boxShadow: '0 4px 8px rgba(0,0,0,0.2)', // More prominent shadow
+            background: 'linear-gradient(45deg, red, darkred)', // Gradient background
+            transition: 'transform 0.2s, box-shadow 0.2s', // Smooth animation on hover
+            ':hover': {
+              transform: 'scale(1.05)', // Slight scaling on hover
+              boxShadow: '0 6px 12px rgba(0,0,0,0.3)', // Increased shadow on hover
+            },
+          }}
+        >
           {errorMessage}
         </div>
+        )}
+
         <div className="row">
           <div className="col-lg-12 col-md-12 col-12 mb-3">
             <div className="input-group">
@@ -67,7 +90,7 @@ const LoginForm1 = () => {
           <div className="col-lg-12 col-12">
             <div className="d-flex justify-content-between align-items-center mt-4">
               <a href="/register" className="text-white mb-0">Register</a>
-              <a href="/reset-password" className="text-white mb-0">Reset password</a>
+              <a href="/resetpassword" className="text-white mb-0">Reset password</a>
             </div>
           </div>
         </div>

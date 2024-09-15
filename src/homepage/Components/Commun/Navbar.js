@@ -39,14 +39,9 @@ const Navbar = () => {
             <li className="nav-item">
             <Link className={isActive('/')} to="/">Homepage</Link>
             </li>
-            <li className="nav-item">
-              <a className="nav-link" href="about.html">About CliniSys</a>
-            </li>
             <li className="nav-item dropdown">
             </li>
-            <li className="nav-item">
-              <a className="nav-link" href="contact.html">Contact</a>
-            </li>
+           
             <li className="nav-item ms-lg-auto">
             <Link className={isActiveButton('/register')} to="/register">Register</Link>
             </li>
