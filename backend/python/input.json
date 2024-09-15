@@ -1,0 +1,10 @@
+{
+  "diseaseName": "test_disease",
+  "symptoms": {
+      "symptom1": 1,
+      "symptom2": 0,
+      "symptom3": 0,
+      "x":1
+  },
+  "allSymptoms": ["symptom1", "symptom2","symptom3","x"]
+}
