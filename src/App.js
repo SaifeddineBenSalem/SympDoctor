@@ -35,6 +35,7 @@ import ViewDiseaseBodySymptoms from './dashboard/doctors/ViewDiseaseBodySymptoms
 
 import HomePage from './homepage/HomePage';
 import Login from './homepage/Login';
+import ResetPassword from './homepage/ResetPassword';
 import Register from './homepage/Register';
 import {jwtDecode} from 'jwt-decode';
 
@@ -69,6 +70,7 @@ function App() {
         <Routes>
           <Route path="/" element={isLoggedIn() ? <Navigate to="/dashboard" /> : <HomePage />} />
           <Route path="/login" element={isLoggedIn() ? <Navigate to="/dashboard" /> : <Login />} />
+          <Route path="/resetpassword" element={isLoggedIn() ? <Navigate to="/dashboard" /> : <ResetPassword />} />
           <Route path="/register" element={isLoggedIn() ? <Navigate to="/dashboard" /> : <Register />} />
           <Route path="/dashboard/add" element={isLoggedIn() ? <AddIllness /> : <Navigate to="/" />} />
           <Route path="/dashboard/profile" element={isLoggedIn() ? <VisualiseProfile /> : <Navigate to="/" />} />
